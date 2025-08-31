@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { CoursesState } from "types/CoursesTypes";
-import { LoadingStatusEnum } from "types/CommonTypes";
-import { fetchPurchased, purchaseCourse } from "redux/actions/coursesActions";
+import { LoadingStatusEnum } from "../../types/CommonTypes";
+import { fetchPurchased, purchaseCourse } from "../actions/coursesActions";
 
 const initialState: CoursesState = {
   purchasedIds: [],
@@ -28,8 +28,8 @@ const coursesSlice = createSlice({
       })
       .addCase(fetchPurchased.rejected, (s) => {
         s.status = LoadingStatusEnum.error;
-      })
-
+      });
+    builder
       .addCase(purchaseCourse.pending, (s) => {
         s.status = LoadingStatusEnum.loading;
         s.error = undefined;

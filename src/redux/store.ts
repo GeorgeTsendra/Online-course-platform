@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import coursesReducer from "./slices/coursesSlice";
+import toastListenerReducer from "./slices/toastListenerSlice";
 
 export const makeStore = () => {
   return configureStore({
@@ -8,6 +9,7 @@ export const makeStore = () => {
       // Add your reducers here
       auth: authReducer,
       courses: coursesReducer,
+      toastListener: toastListenerReducer,
     },
   });
 };

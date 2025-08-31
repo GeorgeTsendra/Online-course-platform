@@ -1,7 +1,7 @@
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
-import { config } from "utils/configInstance";
+import { config } from "./utils/configInstance";
 
 async function enableMocks() {
   if (config.NODE_ENV === "development") {

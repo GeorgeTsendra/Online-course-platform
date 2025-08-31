@@ -7,3 +7,7 @@ export type AuthState = {
   status: LoadingStatusEnum;
   error?: string;
 };
+
+export type Credentials = { email: string; password: string };
+export type RegisterBody = { email: string; password: string; name?: string };
+export type ApiError = { message?: string; [k: string]: unknown };
