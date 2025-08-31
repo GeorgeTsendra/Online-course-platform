@@ -1,0 +1,21 @@
+import { configureStore } from "@reduxjs/toolkit";
+import authReducer from "./slices/authSlice";
+import coursesReducer from "./slices/coursesSlice";
+import toastListenerReducer from "./slices/toastListenerSlice";
+
+export const makeStore = () => {
+  return configureStore({
+    reducer: {
+      // Add your reducers here
+      auth: authReducer,
+      courses: coursesReducer,
+      toastListener: toastListenerReducer,
+    },
+  });
+};
+
+// Infer the type of makeStore
+export type AppStore = ReturnType<typeof makeStore>;
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<AppStore["getState"]>;
+export type AppDispatch = AppStore["dispatch"];

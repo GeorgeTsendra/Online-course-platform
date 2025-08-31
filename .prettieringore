@@ -1,0 +1,35 @@
+# Ignore build directories
+.next/
+out/
+build/
+
+# Ignore log files
+*.log
+
+# Ignore dependencies
+node_modules/
+
+# Ignore environment configuration files
+.env
+.env.* # e.g., .env.local, .env.production
+
+# Ignore TypeScript cache files
+*.tsbuildinfo
+
+# Ignore localization files (if you don't want to format them)
+public/locales/
+
+# Ignore images and static assets
+public/**/*.{png,jpg,jpeg,gif,svg,ico,webp}
+public/**/*.mp4
+public/**/*.webm
+public/**/*.json
+
+# Ignore API routes if formatting is not necessary
+pages/api/
+
+# Ignore static pages
+pages/**/*.{html,json}
+
+.gitignore
+.husky

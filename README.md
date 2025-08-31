@@ -1,70 +1,98 @@
-# Getting Started with Create React App
+# Online Course (React + Redux Toolkit + Router + MSW) — PNPM
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A small demo app for browsing courses, buying them (mocked), and watching videos.  
+Built with **React**, **Redux Toolkit**, **React Router**, **Formik/Yup**, **Axios**, and **MSW (Mock Service Worker)**. Uses **pnpm**.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+- **Auth** (login/register) with Formik + Yup validation
+- **Protected routes** (redirects to login when no token)
+- **Course list** with responsive grid and reusable course cards
+- **Mock purchase** flow; keep purchased courses in Redux state
+- **Watch video** in a modal (HTML5 `<video>`)
+- **Global state** via Redux Toolkit
+- **Mock API** via MSW:
+  - `POST /api/login`
+  - `POST /api/register`
+  - `GET /api/courses`
+  - `GET /api/purchased`
+  - `POST /api/purchase`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+---
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+- React 19, React Router
+- Redux Toolkit
+- Formik + Yup
+- Axios (+ shared axios instance)
+- MSW (Mock Service Worker)
+- TypeScript
+- CSS Modules (SCSS)
+- CRA (react-scripts) tooling
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## ✅ Prerequisites
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Node** 18+ (LTS recommended)
+- **pnpm** 8+  
+  Install: `npm i -g pnpm`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 🚀 Getting Started
 
-### `npm run eject`
+### 1 Install deps
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```bash
+pnpm install
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 2 Start dev server
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```bash
+pnpm start
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 3 Build (production)
 
-## Learn More
+```bash
+pnpm build
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Auth Flow
 
-### Code Splitting
+- On successful login/register, API returns a token.
+- Token is saved to localStorage (see utils/auth.ts).
+- A ProtectedRoute (or router wrapper) checks for token and redirects to /login when absent.
+- axiosInstance automatically attaches Authorization: Bearer <token> header when present.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Courses Flow
 
-### Making a Progressive Web App
+- On app load (root /), we dispatch:
+- CourseGrid renders the list (responsive, SCSS modules).
+- CourseCard shows Buy button (if not purchased) or Watch.
+- Clicking a card (or Watch) opens VideoModal with HTML5 <video> using course.videoUrl.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+## Mock API (MSW)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- POST /api/register → creates user; returns { id, email, name, token }
+- POST /api/login → checks demo user or seeded users; returns user object
+- GET /api/courses → returns array of courses (id, title, description, videoUrl, price, thumbnailUrl)
+- GET /api/purchased → returns { courseIds: string[] } for the logged-in user
+- POST /api/purchase → adds courseId to purchased set for current user
 
-### Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## Routes
 
-### `npm run build` fails to minify
+- /login — login (Formik + Yup)
+- /register — register (Formik + Yup)
+- / — courses (protected)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
