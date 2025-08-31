@@ -1,0 +1,8 @@
+# Run linting
+pnpm lint
+
+# Run formatting
+pnpm format
+
+# Run type-checking (optional but recommended)
+pnpm typecheck
