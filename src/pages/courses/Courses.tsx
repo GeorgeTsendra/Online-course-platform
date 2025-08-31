@@ -1,43 +1,31 @@
-import { useNavigate } from "react-router-dom";
-import { clearToken } from "../../utils/auth";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { logout } from "../../redux/slices/authSlice";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  fetchCourses,
-  fetchPurchased,
-  purchaseCourse,
-} from "../../redux/actions/coursesActions";
+import { useCallback, useMemo } from "react";
+import { purchaseCourse } from "../../redux/actions/coursesActions";
 import { RootState } from "../../redux/store";
 import CourseGrid from "../../components/CourseGrid/CourseGrid";
 import VideoModal from "../../components/VideoModal/VideoModal";
 import { LoadingStatusEnum } from "../../types/CommonTypes";
 import { Course } from "../../types/CoursesTypes";
+import { useCoursesInit } from "../../hooks/useCoursesInit";
+import { useLogout } from "../../hooks/useLogout";
+import { useVideoModal } from "../../hooks/useVideoModal";
+import styles from "./Courses.module.scss";
 
 export default function Courses() {
-  const navigate = useNavigate();
+  const onLogout = useLogout();
+  useCoursesInit();
+
+  const { selected, open, close } = useVideoModal();
+
   const dispatch = useAppDispatch();
 
   const { items, purchasedIds, status, currentVideoId } = useAppSelector(
     (s: RootState) => s.courses
   );
 
-  const [selected, setSelected] = useState<Course | null>(null);
-
-  const onLogout = useCallback(() => {
-    dispatch(logout());
-    clearToken();
-    navigate("/login", { replace: true });
-  }, [dispatch, navigate]);
-
-  useEffect(() => {
-    dispatch(fetchCourses());
-    dispatch(fetchPurchased());
-  }, [dispatch]);
-
   const loading = status === LoadingStatusEnum.loading;
 
-  const handleWatch = (course: Course) => setSelected(course);
+  const handleWatch = useCallback((course: Course) => open(course), [open]);
 
   const handleBuy = (courseId: string) => {
     dispatch(purchaseCourse({ courseId }));
@@ -47,22 +35,16 @@ export default function Courses() {
 
   return (
     <main style={{ padding: 24 }}>
-      <header
-        style={{
-          marginBottom: 16,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
+      <header className={styles.header}>
         <div>
-          <h1 style={{ margin: 0 }}>Courses</h1>
-          <p style={{ margin: "4px 0 0 0", color: "#666" }}>
+          <h1 className={styles.title}>Courses</h1>
+          <p className={styles.subtitle}>
             Protected page (only visible when logged in).
           </p>
         </div>
-        <button onClick={onLogout}>Logout</button>
+        <button className={styles.logoutBtn} onClick={onLogout}>
+          Logout
+        </button>
       </header>
 
       <CourseGrid
@@ -78,7 +60,7 @@ export default function Courses() {
         open={!!selected}
         videoUrl={selected?.videoUrl}
         title={selected?.title}
-        onClose={() => setSelected(null)}
+        onClose={close}
       />
     </main>
   );
