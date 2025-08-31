@@ -6,6 +6,7 @@ export type CoursesState = {
   currentVideoId: string | null;
   status: LoadingStatusEnum;
   listStatus: LoadingStatusEnum;
+  buyStatus: LoadingStatusEnum;
 };
 
 export type Course = {

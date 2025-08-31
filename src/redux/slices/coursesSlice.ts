@@ -13,6 +13,7 @@ const initialState: CoursesState = {
   currentVideoId: null,
   status: LoadingStatusEnum.idle,
   listStatus: LoadingStatusEnum.idle,
+  buyStatus: LoadingStatusEnum.idle,
 };
 
 const coursesSlice = createSlice({
@@ -37,15 +38,15 @@ const coursesSlice = createSlice({
       });
     builder
       .addCase(purchaseCourse.pending, (s) => {
-        s.status = LoadingStatusEnum.loading;
+        s.buyStatus = LoadingStatusEnum.loading;
       })
       .addCase(purchaseCourse.fulfilled, (s, { payload }) => {
-        s.status = LoadingStatusEnum.idle;
+        s.buyStatus = LoadingStatusEnum.idle;
         const id = payload.courseId;
         if (id && !s.purchasedIds.includes(id)) s.purchasedIds.push(id);
       })
       .addCase(purchaseCourse.rejected, (s) => {
-        s.status = LoadingStatusEnum.error;
+        s.buyStatus = LoadingStatusEnum.error;
       });
     builder
       .addCase(fetchPurchased.pending, (s) => {
