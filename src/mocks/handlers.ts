@@ -1,4 +1,5 @@
 import { http, HttpResponse, delay } from "msw";
+import { Course } from "../types/CoursesTypes";
 
 type User = { id: string; email: string; name: string; token: string };
 type LoginBody = { email: string; password: string };
@@ -8,6 +9,7 @@ type PurchaseBody = { courseId: string };
 const FAKE_DB = {
   users: new Map<string, User>(),
   purchasedByUser: new Map<string, Set<string>>(), // userId -> set of courseIds
+  courses: [] as Course[],
 };
 
 const seedUser: User = {
@@ -18,6 +20,50 @@ const seedUser: User = {
 };
 FAKE_DB.users.set(seedUser.email, seedUser);
 FAKE_DB.purchasedByUser.set(seedUser.id, new Set());
+
+/** Seed courses */
+FAKE_DB.courses = [
+  {
+    id: "c_101",
+    title: "React Basics",
+    description:
+      "Learn the fundamentals of React: components, props, state, and hooks.",
+    videoUrl: "https://www.w3schools.com/html/mov_bbb.mp4",
+    price: 19.99,
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800",
+  },
+  {
+    id: "c_102",
+    title: "Advanced TypeScript",
+    description:
+      "Master generics, utility types, advanced typing patterns and best practices.",
+    videoUrl:
+      "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+    price: 29.99,
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800",
+  },
+  {
+    id: "c_103",
+    title: "Node.js API with Express",
+    description:
+      "Build RESTful APIs with Node.js, Express, and middleware like JWT.",
+    videoUrl: "https://www.w3schools.com/html/movie.mp4",
+    price: 24.99,
+    thumbnailUrl:
+      "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?q=80&w=800",
+  },
+];
+
+function getUserByAuthHeader(request: Request): User | null {
+  const auth = (request.headers.get("authorization") ?? "").replace(
+    "Bearer ",
+    ""
+  );
+  if (!auth) return null;
+  return [...FAKE_DB.users.values()].find((u) => u.token === auth) ?? null;
+}
 
 export const handlers = [
   http.post("/api/register", async ({ request }) => {
@@ -66,15 +112,16 @@ export const handlers = [
     return HttpResponse.json(found, { status: 200 });
   }),
 
+  http.get("/api/courses", async () => {
+    await delay(400);
+    return HttpResponse.json({ courses: FAKE_DB.courses }, { status: 200 });
+  }),
+
   // Buying at the rate
   http.post("/api/purchase", async ({ request }) => {
     await delay(800);
     const { courseId } = (await request.json()) as PurchaseBody;
-    const auth = (request.headers.get("authorization") ?? "").replace(
-      "Bearer ",
-      ""
-    );
-    const user = [...FAKE_DB.users.values()].find((u) => u.token === auth);
+    const user = getUserByAuthHeader(request);
     if (!user) {
       return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
@@ -98,13 +145,9 @@ export const handlers = [
   // List of purchased courses
   http.get("/api/purchased", async ({ request }) => {
     await delay(300);
-    const auth = (request.headers.get("authorization") ?? "").replace(
-      "Bearer ",
-      ""
-    );
-    const user = [...FAKE_DB.users.values()].find((u) => u.token === auth);
+    const user = getUserByAuthHeader(request);
     if (!user) {
-      return HttpResponse.json({ message: "unauthorised" }, { status: 401 });
+      return HttpResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
     const set = FAKE_DB.purchasedByUser.get(user.id) ?? new Set();
     return HttpResponse.json({ courseIds: [...set] }, { status: 200 });

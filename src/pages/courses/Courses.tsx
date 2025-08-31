@@ -2,7 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { clearToken } from "../../utils/auth";
 import { useAppDispatch } from "../../redux/hooks";
 import { logout } from "../../redux/slices/authSlice";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import {
+  fetchCourses,
+  fetchPurchased,
+} from "../../redux/actions/coursesActions";
 
 export default function Courses() {
   const navigate = useNavigate();
@@ -14,6 +18,11 @@ export default function Courses() {
     clearToken();
     navigate("/login", { replace: true });
   }, []);
+
+  useEffect(() => {
+    dispatch(fetchCourses());
+    dispatch(fetchPurchased());
+  }, [dispatch]);
 
   return (
     <main style={{ padding: 24 }}>
